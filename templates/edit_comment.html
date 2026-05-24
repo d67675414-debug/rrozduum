@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Редактировать комментарий — ROZDUM{% endblock %}
+{% block content %}
+
+<section class="form-card card">
+    <div class="back-row">
+        <a class="back-btn" href="{{ url_for('topic_view', topic_id=comment.topic_id) }}#comments">← Назад</a>
+    </div>
+
+    <h1>Редактировать комментарий</h1>
+
+    <form method="POST" id="editCommentForm">
+        <div class="field">
+            <label>Текст комментария</label>
+            <textarea name="content" id="commentContent" rows="7" required>{{ comment.content }}</textarea>
+        </div>
+
+        <div class="form-actions">
+            <a class="btn-ghost" href="{{ url_for('topic_view', topic_id=comment.topic_id) }}#comments">Назад</a>
+            <button class="btn-primary" type="submit">Сохранить</button>
+        </div>
+    </form>
+</section>
+
+<script>
+    const commentEl = document.getElementById("commentContent");
+    const draftKey = "rozdum_edit_comment_{{ comment.id }}";
+
+    function saveDraft() {
+        localStorage.setItem(draftKey, commentEl.value || "");
+    }
+
+    function loadDraft() {
+        try {
+            const raw = localStorage.getItem(draftKey);
+            if (raw) commentEl.value = raw;
+        } catch (e) {}
+    }
+
+    commentEl.addEventListener("input", saveDraft);
+
+    document.getElementById("editCommentForm").addEventListener("submit", function () {
+        localStorage.removeItem(draftKey);
+    });
+
+    loadDraft();
+</script>
+
+{% endblock %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">

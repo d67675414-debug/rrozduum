@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Создать пост — ROZDUM{% endblock %}
+{% block content %}
+
+<section class="form-card card">
+    <div class="back-row">
+        <a class="back-btn" href="{{ url_for('forum') }}">← Назад</a>
+    </div>
+
+    <h1>Создать пост</h1>
+    <p class="muted">Напиши тему, добавь текст и, если нужно, фото.</p>
+
+    <form method="POST" enctype="multipart/form-data" id="createForm">
+        <div class="field">
+            <label>Заголовок</label>
+            <input type="text" name="title" id="postTitle" placeholder="О чём твой пост?" required>
+        </div>
+
+        <div class="field">
+            <label>Текст</label>
+            <textarea name="content" id="postContent" rows="10" placeholder="Напиши пост..." required></textarea>
+        </div>
+
+        <div class="field">
+            <label class="file-label">Выбери фото</label>
+            <input type="file" name="image" accept="image/*">
+        </div>
+
+        <div class="form-actions">
+            <a class="btn-ghost" href="{{ url_for('forum') }}">Назад</a>
+            <button class="btn-primary" type="submit">Опубликовать</button>
+        </div>
+    </form>
+</section>
+
+<script>
+    const titleEl = document.getElementById("postTitle");
+    const contentEl = document.getElementById("postContent");
+    const draftKey = "rozdum_create_draft";
+
+    function saveDraft() {
+        localStorage.setItem(draftKey, JSON.stringify({
+            title: titleEl.value || "",
+            content: contentEl.value || ""
+        }));
+    }
+
+    function loadDraft() {
+        try {
+            const raw = localStorage.getItem(draftKey);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            if (data.title) titleEl.value = data.title;
+            if (data.content) contentEl.value = data.content;
+        } catch (e) {}
+    }
+
+    titleEl.addEventListener("input", saveDraft);
+    contentEl.addEventListener("input", saveDraft);
+
+    document.getElementById("createForm").addEventListener("submit", function () {
+        localStorage.removeItem(draftKey);
+    });
+
+    loadDraft();
+</script>
+
+{% endblock %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
